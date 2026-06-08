@@ -1,5 +1,6 @@
 package com.example.arena_booker.service;
 
+import com.example.arena_booker.dto.ReservationRequestDto;
 import com.example.arena_booker.dto.ReservationResponseDto;
 import com.example.arena_booker.model.Reservation;
 import com.example.arena_booker.repository.ReservationRepository;
@@ -20,10 +21,17 @@ public class ReservationService {
     private ReservationResponseDto mapReservationToReservationDto (Reservation reservation) {
         ReservationResponseDto reservationResponseDto = new ReservationResponseDto(
                 reservation.getId(),
-                reservation.getSector().toString(),
+                reservation.getSector(),
                 reservation.getStartTime(),
                 reservation.getEndTime());
         return reservationResponseDto;
+    }
+
+    public ReservationResponseDto createReservation(ReservationRequestDto reservationRequestDto) {
+        Reservation reservation = new Reservation(reservationRequestDto.sector(), reservationRequestDto.startTime(), reservationRequestDto.endTime());
+        reservationRepository.save(reservation);
+        return mapReservationToReservationDto(reservation);
+
     }
 
 
