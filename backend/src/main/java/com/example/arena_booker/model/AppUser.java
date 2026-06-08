@@ -34,4 +34,9 @@ public class AppUser {
     public String getPassword() {
         return password;
     }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
+

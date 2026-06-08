@@ -25,6 +25,14 @@ public class AppUserController {
         return appUserService.addUser(appUserRequestDto);
     }
 
+    @PutMapping("/{id}/{role}")
+    public void changeRole(@PathVariable Integer id, @PathVariable String role) {
+        appUserService.changeRole(id, role);
+    }
 
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Integer id) {
+        appUserService.deleteUser(id);
+    }
 
 }

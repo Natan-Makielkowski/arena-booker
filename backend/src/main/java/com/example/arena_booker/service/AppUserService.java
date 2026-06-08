@@ -4,6 +4,7 @@ import com.example.arena_booker.dto.AppUserRequestDto;
 import com.example.arena_booker.dto.AppUserResponseDto;
 import com.example.arena_booker.model.AppUser;
 import com.example.arena_booker.repository.AppUserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +33,16 @@ public class AppUserService {
                 appUser.getUsername(),
                 appUser.getRole()
         );
+    }
+
+    public void changeRole(Integer id, String role) {
+        AppUser newAppUser = appUserRepository.findById(id).orElseThrow();
+        newAppUser.setRole(role);
+        appUserRepository.save(newAppUser);
+    }
+
+    public void deleteUser(Integer id) {
+        appUserRepository.deleteById(id);
     }
 
 
