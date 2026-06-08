@@ -2,6 +2,7 @@ package com.example.arena_booker.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,7 @@ public class SportsEquipment {
     }
 
     @ManyToMany
-    private List<Reservation> reservations;
+    private List<Reservation> reservations =  new ArrayList<>();
 
 
 }

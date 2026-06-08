@@ -2,6 +2,7 @@ package com.example.arena_booker.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,10 +22,6 @@ public class AppUser {
     }
 
     @OneToMany(mappedBy = "appUser")
-    private List<Reservation> reservations;
-
-    @ManyToMany
-    private List<Reservation> books;
-
+    private List<Reservation> reservations =  new ArrayList<>();
 
 }
