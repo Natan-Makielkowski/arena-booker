@@ -2,6 +2,7 @@ package com.example.arena_booker.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,7 +36,24 @@ public class Reservation {
                 inverseJoinColumns = @JoinColumn(name = "sports_equipment_id")
 
     )
-    private List<SportsEquipment> sportsEquipmentList;
+    private List<SportsEquipment> sportsEquipmentList =  new ArrayList<>();
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Sector getSector() {
+        return sector;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
 
 
 
