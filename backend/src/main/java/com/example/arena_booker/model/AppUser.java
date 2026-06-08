@@ -1,9 +1,8 @@
 package com.example.arena_booker.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class AppUser {
@@ -20,5 +19,12 @@ public class AppUser {
         this.password = password;
         this.role = role;
     }
+
+    @OneToMany(mappedBy = "appUser")
+    private List<Reservation> reservations;
+
+    @ManyToMany
+    private List<Reservation> books;
+
 
 }

@@ -1,9 +1,8 @@
 package com.example.arena_booker.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class SportsEquipment {
@@ -19,6 +18,9 @@ public class SportsEquipment {
         this.equipmentName = equipmentName;
         this.totalQuantity = totalQuantity;
     }
+
+    @ManyToMany
+    private List<Reservation> reservations;
 
 
 }
