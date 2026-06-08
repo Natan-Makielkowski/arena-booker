@@ -37,6 +37,23 @@ public class Reservation {
     )
     private List<SportsEquipment> sportsEquipmentList;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public Sector getSector() {
+        return sector;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+
 
 
 
