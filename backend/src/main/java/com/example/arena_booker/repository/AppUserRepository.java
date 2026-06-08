@@ -3,5 +3,8 @@ package com.example.arena_booker.repository;
 import com.example.arena_booker.model.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface AppUserRepository extends JpaRepository<AppUser,Integer> {
+    Optional<AppUser> findByUsername(String username);
 }

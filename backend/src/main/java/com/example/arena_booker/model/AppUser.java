@@ -24,4 +24,14 @@ public class AppUser {
     @OneToMany(mappedBy = "appUser")
     private List<Reservation> reservations =  new ArrayList<>();
 
+    public String getUsername() {
+        return username;
+    }
+    public String getRole() {
+        return role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }

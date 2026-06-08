@@ -19,12 +19,11 @@ public class ReservationService {
     }
 
     private ReservationResponseDto mapReservationToReservationDto (Reservation reservation) {
-        ReservationResponseDto reservationResponseDto = new ReservationResponseDto(
+        return new ReservationResponseDto(
                 reservation.getId(),
                 reservation.getSector(),
                 reservation.getStartTime(),
                 reservation.getEndTime());
-        return reservationResponseDto;
     }
 
     public ReservationResponseDto createReservation(ReservationRequestDto reservationRequestDto) {
