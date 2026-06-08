@@ -1,4 +1,7 @@
 package com.example.arena_booker.dto;
 
-public record AppUserRequestDto (String username, String password) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record AppUserRequestDto (@NotBlank @Size(max = 20) String username,@NotBlank @Size(min = 6) String password) {
 }
