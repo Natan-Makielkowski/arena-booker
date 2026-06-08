@@ -3,6 +3,7 @@ package com.example.arena_booker.controller;
 import com.example.arena_booker.dto.AppUserRequestDto;
 import com.example.arena_booker.dto.AppUserResponseDto;
 import com.example.arena_booker.service.AppUserService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class AppUserController {
     }
 
     @PostMapping
-    public AppUserResponseDto addUser(@RequestBody AppUserRequestDto appUserRequestDto) {
+    public AppUserResponseDto addUser(@Valid @RequestBody AppUserRequestDto appUserRequestDto) {
         return appUserService.addUser(appUserRequestDto);
     }
 
