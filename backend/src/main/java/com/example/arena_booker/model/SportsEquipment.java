@@ -20,7 +20,7 @@ public class SportsEquipment {
         this.totalQuantity = totalQuantity;
     }
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "sportsEquipmentList")
     private List<Reservation> reservations =  new ArrayList<>();
 
 

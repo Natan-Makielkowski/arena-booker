@@ -9,7 +9,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,7 +22,7 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<ReservationResponseDto> getAllReservations() throws Exception{
+    public List<ReservationResponseDto> getAllReservations(){
         return reservationService.getAllReservations();
     }
 
@@ -34,9 +33,20 @@ public class ReservationController {
         return reservationService.createReservation(reservationRequestDto);
     }
 
+    @PutMapping("/{id}")
+    public void updateReservation(@PathVariable Integer id, @RequestBody ReservationRequestDto reservationRequestDto) throws Exception {
+        reservationService.updateReservation(id, reservationRequestDto);
+    }
+
     @GetMapping("/check")
     public boolean isTaken(@RequestParam Sector sector, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
         return reservationService.isTaken(sector, startTime, endTime);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteReservation(@PathVariable Integer id){
+        reservationService.deleteReservation(id);
+
     }
 
 

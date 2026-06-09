@@ -4,14 +4,13 @@ import com.example.arena_booker.dto.AppUserRequestDto;
 import com.example.arena_booker.dto.AppUserResponseDto;
 import com.example.arena_booker.model.AppUser;
 import com.example.arena_booker.repository.AppUserRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class AppUserService {
-    AppUserRepository appUserRepository;
+    private final AppUserRepository appUserRepository;
     public AppUserService(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
     }

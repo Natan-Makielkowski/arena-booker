@@ -16,16 +16,13 @@ import java.util.List;
 
 @Service
 public class ReservationService {
-    ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
 
     public ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
     }
 
-    public List<ReservationResponseDto> getAllReservations() throws Exception{
-        if(reservationRepository.findAll().isEmpty()) {
-            throw new ResourceNotFoundException("Reservations not found");
-        }
+    public List<ReservationResponseDto> getAllReservations(){
         return reservationRepository.findAll().stream().map(this::mapReservationToReservationDto).toList();
 
     }
@@ -49,9 +46,31 @@ public class ReservationService {
 
     }
 
+    public void updateReservation(@NonNull Integer id, @NonNull ReservationRequestDto reservationRequestDto) {
+        if(isTakenByAnother(id, reservationRequestDto.sector(), reservationRequestDto.startTime(), reservationRequestDto.endTime())){
+            throw new ReservationConflictException("Sector is already in use.");
+        }
+
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
+        reservation.setSector(reservationRequestDto.sector());
+        reservation.setStartTime(reservationRequestDto.startTime());
+        reservation.setEndTime(reservationRequestDto.endTime());
+        reservationRepository.save(reservation);
+    }
+
+    public void deleteReservation(@NonNull Integer id){
+        reservationRepository.deleteById(id);
+    }
+
     public boolean isTaken(Sector sector, LocalDateTime startTime, LocalDateTime endTime) {
         return !reservationRepository.overlappingReservations(sector, startTime, endTime).isEmpty();
     }
+
+    public boolean isTakenByAnother(Integer currentReservationId, Sector sector, LocalDateTime startTime, LocalDateTime endTime) {
+        return !reservationRepository.overlappingReservationsExcludingCurrent(currentReservationId, sector, startTime, endTime).isEmpty();
+    }
+
+
     }
 
 
