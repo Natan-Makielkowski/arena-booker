@@ -5,6 +5,7 @@ import com.example.arena_booker.dto.ReservationRequestDto;
 import com.example.arena_booker.dto.ReservationResponseDto;
 import com.example.arena_booker.model.Sector;
 import com.example.arena_booker.service.ReservationService;
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class ReservationController {
     }
 
     @PutMapping("/{id}")
-    public void updateReservation(@PathVariable Integer id, @RequestBody ReservationRequestDto reservationRequestDto) throws Exception {
+    public void updateReservation(@PathVariable Integer id, @RequestBody @Valid ReservationRequestDto reservationRequestDto) throws Exception {
         reservationService.updateReservation(id, reservationRequestDto);
     }
 

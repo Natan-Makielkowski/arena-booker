@@ -1,5 +1,6 @@
 package com.example.arena_booker.service;
 
+import com.example.arena_booker.Exception.ResourceNotFoundException;
 import com.example.arena_booker.dto.AppUserRequestDto;
 import com.example.arena_booker.dto.AppUserResponseDto;
 import com.example.arena_booker.model.AppUser;
@@ -35,7 +36,7 @@ public class AppUserService {
     }
 
     public void changeRole(Integer id, String role) {
-        AppUser newAppUser = appUserRepository.findById(id).orElseThrow();
+        AppUser newAppUser = appUserRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such user was found"));
         newAppUser.setRole(role);
         appUserRepository.save(newAppUser);
     }

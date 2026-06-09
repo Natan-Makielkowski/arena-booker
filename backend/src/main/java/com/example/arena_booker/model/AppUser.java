@@ -22,7 +22,7 @@ public class AppUser {
     }
 
     @OneToMany(mappedBy = "appUser")
-    private List<Reservation> reservations =  new ArrayList<>();
+    private final List<Reservation> reservations =  new ArrayList<>();
 
     public String getUsername() {
         return username;

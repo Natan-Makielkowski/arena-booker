@@ -32,6 +32,7 @@ public class Reservation {
     private AppUser appUser;
 
 
+    /* TO BE IMPLEMENTED
     @ManyToMany
     @JoinTable(name = "reservation_sportsEquipment",
                 joinColumns = @JoinColumn(name = "reservation_id"),
@@ -39,7 +40,7 @@ public class Reservation {
 
     )
     private final List<SportsEquipment> sportsEquipmentList =  new ArrayList<>();
-
+    */
     public Integer getId() {
         return id;
     }
