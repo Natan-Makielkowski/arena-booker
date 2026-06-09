@@ -1,6 +1,8 @@
 package com.example.arena_booker.model;
 
 import jakarta.persistence.*;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,10 @@ public class Reservation {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public Long getDuration() {
+        return Duration.between(startTime, endTime).toMinutes();
     }
 
 

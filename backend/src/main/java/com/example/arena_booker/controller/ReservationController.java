@@ -3,10 +3,12 @@ package com.example.arena_booker.controller;
 
 import com.example.arena_booker.dto.ReservationRequestDto;
 import com.example.arena_booker.dto.ReservationResponseDto;
-import com.example.arena_booker.model.Reservation;
+import com.example.arena_booker.model.Sector;
 import com.example.arena_booker.service.ReservationService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +23,22 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<ReservationResponseDto> getAllReservations() {
+    public List<ReservationResponseDto> getAllReservations() throws Exception{
         return reservationService.getAllReservations();
     }
 
+
+
     @PostMapping
-    public ReservationResponseDto createReservation(@RequestBody ReservationRequestDto reservationRequestDto) {
+    public ReservationResponseDto createReservation(@RequestBody ReservationRequestDto reservationRequestDto) throws Exception {
         return reservationService.createReservation(reservationRequestDto);
     }
+
+    @GetMapping("/check")
+    public boolean isTaken(@RequestParam Sector sector, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
+        return reservationService.isTaken(sector, startTime, endTime);
+    }
+
+
 
 }

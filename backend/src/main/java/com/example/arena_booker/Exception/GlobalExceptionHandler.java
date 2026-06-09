@@ -18,5 +18,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ReservationConflictException.class)
+    public ResponseEntity<ErrorResponseDto> handleReservationConflictException(ReservationConflictException ex){
+        ErrorResponseDto errorDto = new ErrorResponseDto(LocalDateTime.now(), HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage());
+        return new ResponseEntity<>(errorDto, HttpStatus.CONFLICT);
+    }
 
 }
