@@ -2,6 +2,7 @@ package com.example.arena_booker.config;
 
 
 import com.example.arena_booker.dto.AppUserRequestDto;
+import com.example.arena_booker.model.AppUser;
 import com.example.arena_booker.repository.AppUserRepository;
 import com.example.arena_booker.service.AppUserService;
 import org.springframework.boot.CommandLineRunner;
@@ -21,7 +22,10 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (appUserRepository.count() == 0) {
-            appUserService.addUser(new AppUserRequestDto("admin", "admin123"));
+            AppUserRequestDto adminDto = new AppUserRequestDto("admin", "admin123");
+            appUserService.addUser(adminDto);
+            appUserService.changeRole(1, "ADMIN");
+
 
 
 

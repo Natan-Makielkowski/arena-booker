@@ -1,19 +1,22 @@
 package com.example.arena_booker.service;
 
+import com.example.arena_booker.Exception.ResourceNotFoundException;
 import com.example.arena_booker.dto.AppUserRequestDto;
 import com.example.arena_booker.dto.AppUserResponseDto;
 import com.example.arena_booker.model.AppUser;
 import com.example.arena_booker.repository.AppUserRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class AppUserService {
-    AppUserRepository appUserRepository;
-    public AppUserService(AppUserRepository appUserRepository) {
+    private final AppUserRepository appUserRepository;
+    private final PasswordEncoder passwordEncoder;
+    public AppUserService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
         this.appUserRepository = appUserRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<AppUserResponseDto> getUsers() {
@@ -21,7 +24,7 @@ public class AppUserService {
     }
 
     public AppUserResponseDto addUser(AppUserRequestDto appUserRequestDto) {
-        AppUser newAppUser = new AppUser(appUserRequestDto.username(),"{noop}" + appUserRequestDto.password(), "USER");
+        AppUser newAppUser = new AppUser(appUserRequestDto.username(), passwordEncoder.encode(appUserRequestDto.password()), "USER");
         appUserRepository.save(newAppUser);
         return mapAppUserToDto(newAppUser);
     }
@@ -36,7 +39,7 @@ public class AppUserService {
     }
 
     public void changeRole(Integer id, String role) {
-        AppUser newAppUser = appUserRepository.findById(id).orElseThrow();
+        AppUser newAppUser = appUserRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such user was found"));
         newAppUser.setRole(role);
         appUserRepository.save(newAppUser);
     }

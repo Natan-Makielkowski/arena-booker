@@ -32,14 +32,15 @@ public class Reservation {
     private AppUser appUser;
 
 
+    /* TO BE IMPLEMENTED
     @ManyToMany
     @JoinTable(name = "reservation_sportsEquipment",
                 joinColumns = @JoinColumn(name = "reservation_id"),
                 inverseJoinColumns = @JoinColumn(name = "sports_equipment_id")
 
     )
-    private List<SportsEquipment> sportsEquipmentList =  new ArrayList<>();
-
+    private final List<SportsEquipment> sportsEquipmentList =  new ArrayList<>();
+    */
     public Integer getId() {
         return id;
     }
@@ -54,6 +55,16 @@ public class Reservation {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public void setSector(Sector sector) {
+        this.sector = sector;
+    }
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public Long getDuration() {
