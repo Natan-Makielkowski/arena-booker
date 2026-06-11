@@ -1,0 +1,28 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+class ApiService {
+  static const String baseUrl = 'http://localhost:8080/api';
+  
+  final _storage = const FlutterSecureStorage();
+
+Future<void> login(String username, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      await _storage.write(key: 'jwt_token', value: data['token']);
+    } else {
+      throw Exception('Wrong username or password');
+    }
+  }
+
+}
