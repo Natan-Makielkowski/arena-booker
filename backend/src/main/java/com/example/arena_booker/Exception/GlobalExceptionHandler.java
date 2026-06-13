@@ -13,15 +13,21 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException ex){
+    public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException ex) {
         ErrorResponseDto errorDto = new ErrorResponseDto(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ReservationConflictException.class)
-    public ResponseEntity<ErrorResponseDto> handleReservationConflictException(ReservationConflictException ex){
+    public ResponseEntity<ErrorResponseDto> handleReservationConflictException(ReservationConflictException ex) {
         ErrorResponseDto errorDto = new ErrorResponseDto(LocalDateTime.now(), HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(UserConflictException.class)
+    public ResponseEntity<ErrorResponseDto> handleUserConflictException(UserConflictException ex) {
+        ErrorResponseDto errorDto = new ErrorResponseDto(LocalDateTime.now(), HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage());
+        return new ResponseEntity<>(errorDto, HttpStatus.CONFLICT);
+
+    }
 }

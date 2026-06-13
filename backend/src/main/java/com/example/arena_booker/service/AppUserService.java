@@ -1,6 +1,7 @@
 package com.example.arena_booker.service;
 
 import com.example.arena_booker.Exception.ResourceNotFoundException;
+import com.example.arena_booker.Exception.UserConflictException;
 import com.example.arena_booker.dto.AppUserRequestDto;
 import com.example.arena_booker.dto.AppUserResponseDto;
 import com.example.arena_booker.model.AppUser;
@@ -24,6 +25,9 @@ public class AppUserService {
     }
 
     public AppUserResponseDto addUser(AppUserRequestDto appUserRequestDto) {
+        if(appUserRepository.existsByUsername(appUserRequestDto.username())){
+            throw new UserConflictException("This username is taken. ");
+        }
         AppUser newAppUser = new AppUser(appUserRequestDto.username(), passwordEncoder.encode(appUserRequestDto.password()), "USER");
         appUserRepository.save(newAppUser);
         return mapAppUserToDto(newAppUser);

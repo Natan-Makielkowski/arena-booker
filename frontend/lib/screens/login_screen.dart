@@ -34,13 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               .login(
                                 _usernameController.text,
                                 _passwordController.text,
-                              )
-                              .then((_) {})
-                              .catchError((error) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(error.toString())),
-                                );
-                              });
+                              );
 
                           if (!mounted) return;
                           Navigator.pushReplacement(

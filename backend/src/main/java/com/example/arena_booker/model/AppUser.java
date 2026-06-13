@@ -24,6 +24,9 @@ public class AppUser {
     @OneToMany(mappedBy = "appUser")
     private final List<Reservation> reservations =  new ArrayList<>();
 
+    public Integer getId() {
+        return id;
+    }
     public String getUsername() {
         return username;
     }

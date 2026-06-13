@@ -7,9 +7,9 @@
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
-              <build path="$PROJECT_DIR$/../../../../flutter/packages/flutter_tools/gradle" name="gradle">
+              <build path="D:/dev/flutter/packages/flutter_tools/gradle" name="gradle">
                 <projects>
-                  <project path="$PROJECT_DIR$/../../../../flutter/packages/flutter_tools/gradle" />
+                  <project path="D:/dev/flutter/packages/flutter_tools/gradle" />
                 </projects>
               </build>
             </builds>
@@ -18,9 +18,12 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/frontend/android" />
         <option name="modules">
           <set>
+            <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage-10.3.1/android" />
+            <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/jni-1.0.0/android" />
+            <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/jni_flutter-1.0.1/android" />
             <option value="$PROJECT_DIR$/frontend/android" />
             <option value="$PROJECT_DIR$/frontend/android/app" />
-            <option value="$PROJECT_DIR$/../../../../flutter/packages/flutter_tools/gradle" />
+            <option value="D:/dev/flutter/packages/flutter_tools/gradle" />
           </set>
         </option>
       </GradleProjectSettings>

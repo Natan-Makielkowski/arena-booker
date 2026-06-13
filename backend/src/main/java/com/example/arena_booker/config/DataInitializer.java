@@ -21,15 +21,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (appUserRepository.count() == 0) {
+        if (!appUserRepository.existsByUsername("admin")) {
             AppUserRequestDto adminDto = new AppUserRequestDto("admin", "admin123");
             appUserService.addUser(adminDto);
+
             appUserService.changeRole(1, "ADMIN");
-
-
-
-
-
-        }
     }
-}
+}}

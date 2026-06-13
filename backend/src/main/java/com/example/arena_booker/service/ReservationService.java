@@ -35,7 +35,7 @@ public class ReservationService {
                 reservation.getEndTime());
     }
 
-    public ReservationResponseDto createReservation(@NonNull ReservationRequestDto reservationRequestDto) throws Exception {
+    public ReservationResponseDto createReservation(@NonNull ReservationRequestDto reservationRequestDto){
         if(isTaken(reservationRequestDto.sector(), reservationRequestDto.startTime(), reservationRequestDto.endTime())) {
             throw new ReservationConflictException("Sector is already in use.");
         }
