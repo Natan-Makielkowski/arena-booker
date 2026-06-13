@@ -1,41 +1,35 @@
 package com.example.arena_booker.controller;
 
 import com.example.arena_booker.dto.AppUserRequestDto;
-import com.example.arena_booker.model.AppUser;
-import com.example.arena_booker.repository.AppUserRepository;
+import com.example.arena_booker.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class AuthController {
 
-    private final AppUserRepository appUserRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
-    public AuthController(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
-        this.appUserRepository = appUserRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AppUserRequestDto loginRequest) {
-        Optional<AppUser> userOptional = appUserRepository.findByUsername(loginRequest.username());
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password. ");
-        }
+        boolean isAuthorized = authService.authenticate(
+                loginRequest.username(),
+                loginRequest.password()
+        );
 
-        AppUser user = userOptional.get();
+        if (isAuthorized) {
 
-        if (passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
-
-            return ResponseEntity.ok().body("Token: ");
-
+            return ResponseEntity.ok(Map.of("token key", "token value"));
         } else {
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password. ");
         }
     }
