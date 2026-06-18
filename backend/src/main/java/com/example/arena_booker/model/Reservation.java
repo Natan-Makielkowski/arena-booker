@@ -71,6 +71,14 @@ public class Reservation {
         return Duration.between(startTime, endTime).toMinutes();
     }
 
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
+    }
+
 
 
 
