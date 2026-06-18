@@ -1,6 +1,7 @@
 package com.example.arena_booker.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -55,5 +56,12 @@ public class JwtService {
     private SecretKey getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+    public boolean isTokenValid(String token) {
+        try {
+            return !extractClaim(token, Claims::getExpiration).before(new Date());
+        } catch (JwtException e) {
+            return false;
+        }
     }
 }
