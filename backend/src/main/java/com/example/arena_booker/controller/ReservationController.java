@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,16 +23,21 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
+    //@GetMapping
+    //public List<ReservationResponseDto> getAllReservations(){
+    //    return reservationService.getUsersReservations();
+    //}
+
     @GetMapping
-    public List<ReservationResponseDto> getAllReservations(){
-        return reservationService.getAllReservations();
+    public List<ReservationResponseDto> getMyReservations(Principal principal){
+        return reservationService.getUsersReservations(principal.getName());
     }
 
 
 
     @PostMapping
-    public ReservationResponseDto createReservation(@RequestBody ReservationRequestDto reservationRequestDto) throws Exception {
-        return reservationService.createReservation(reservationRequestDto);
+    public ReservationResponseDto createReservation(@RequestBody @Valid ReservationRequestDto reservationRequestDto, Principal principal) throws Exception {
+        return reservationService.createReservation(reservationRequestDto, principal.getName());
     }
 
     @PutMapping("/{id}")

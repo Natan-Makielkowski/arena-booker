@@ -4,8 +4,10 @@ import com.example.arena_booker.Exception.ReservationConflictException;
 import com.example.arena_booker.Exception.ResourceNotFoundException;
 import com.example.arena_booker.dto.ReservationRequestDto;
 import com.example.arena_booker.dto.ReservationResponseDto;
+import com.example.arena_booker.model.AppUser;
 import com.example.arena_booker.model.Reservation;
 import com.example.arena_booker.model.Sector;
+import com.example.arena_booker.repository.AppUserRepository;
 import com.example.arena_booker.repository.ReservationRepository;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -17,15 +19,20 @@ import java.util.List;
 @Service
 public class ReservationService {
     private final ReservationRepository reservationRepository;
+    private final AppUserRepository appUserRepository;
 
-    public ReservationService(ReservationRepository reservationRepository) {
+    public ReservationService(ReservationRepository reservationRepository, AppUserRepository appUserRepository) {
         this.reservationRepository = reservationRepository;
+        this.appUserRepository = appUserRepository;
     }
 
-    public List<ReservationResponseDto> getAllReservations(){
-        return reservationRepository.findAll().stream().map(this::mapReservationToReservationDto).toList();
-
+    public List<ReservationResponseDto> getUsersReservations(String username){
+        return reservationRepository.findAllByAppUserUsername(username).stream()
+                .map(this::mapReservationToReservationDto)
+                .toList();
     }
+
+
 
     private ReservationResponseDto mapReservationToReservationDto (Reservation reservation) {
         return new ReservationResponseDto(
@@ -35,12 +42,16 @@ public class ReservationService {
                 reservation.getEndTime());
     }
 
-    public ReservationResponseDto createReservation(@NonNull ReservationRequestDto reservationRequestDto){
+    public ReservationResponseDto createReservation(@NonNull ReservationRequestDto reservationRequestDto, String username){
         if(isTaken(reservationRequestDto.sector(), reservationRequestDto.startTime(), reservationRequestDto.endTime())) {
             throw new ReservationConflictException("Sector is already in use.");
         }
 
+        AppUser currentUser = appUserRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         Reservation reservation = new Reservation(reservationRequestDto.sector(), reservationRequestDto.startTime(), reservationRequestDto.endTime());
+        reservation.setAppUser(currentUser);
         reservationRepository.save(reservation);
         return mapReservationToReservationDto(reservation);
 
