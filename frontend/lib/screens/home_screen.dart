@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,12 +9,63 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ApiService _apiService = ApiService();
   final List<String> sectors = ['SECTOR_A', 'SECTOR_B', 'SECTOR_C'];
 
+  List<dynamic> reservations = [];
+  bool isLoading = true;
 
-  final List<Map<String, dynamic>> reservations = [
-    {'id': 1, 'sector': 'SECTOR_A', 'time': 'Dzisiaj, 18:00 - 19:30'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchReservations();
+  }
+
+  Future<void> _fetchReservations() async {
+    setState(() => isLoading = true);
+    try {
+      final data = await _apiService.getReservations();
+      setState(() {
+        reservations = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() => isLoading = false);
+      _showSnackBar('Server connection error: $e', Colors.red);
+    }
+  }
+
+  Future<void> _makeReservation(String sector) async {
+    final now = DateTime.now();
+    final startTime = now.toIso8601String();
+    final endTime = now.add(const Duration(hours: 1)).toIso8601String();
+
+    Navigator.pop(context);
+
+    try {
+      await _apiService.createReservation(sector, startTime, endTime);
+      _showSnackBar('Reservation successful!', Colors.green);
+      _fetchReservations();
+    } catch (e) {
+      _showSnackBar(e.toString().replaceAll('Exception: ', ''), Colors.red);
+    }
+  }
+
+  Future<void> _deleteReservation(int id) async {
+    try {
+      await _apiService.deleteReservation(id);
+      _showSnackBar('Reservation deleted', Colors.orange);
+      _fetchReservations();
+    } catch (e) {
+      _showSnackBar('Error during deletion: $e', Colors.red);
+    }
+  }
+
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: color),
+    );
+  }
 
   void _showBookingBottomSheet(String sector) {
     showModalBottomSheet(
@@ -29,37 +81,18 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Reservation: ${sector.replaceAll('_', ' ')}',
+                'Book: ${sector.replaceAll('_', ' ')}',
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
               OutlinedButton.icon(
                 icon: const Icon(Icons.calendar_today),
-                label: const Text('Choose date and time'),
+                label: const Text('Book next hour'),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                onPressed: () {
-                  // TODO: showDatePicker and showTimePicker
-                },
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'Confirm the reservation',
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+                onPressed: () => _makeReservation(sector),
               ),
             ],
           ),
@@ -78,8 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
         foregroundColor: Colors.black87,
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_outline, size: 28),
-            onPressed: () {
+            icon: const Icon(Icons.logout, size: 28),
+            onPressed: () async {
+              await _apiService.logout();
+              // TODO: Navigate to login screen
             },
           )
         ],
@@ -89,13 +124,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 10),
-            const Text(
-              'Quick reservation',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text('Quick Booking', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-
             SizedBox(
               height: 140,
               child: ListView.builder(
@@ -106,17 +136,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () => _showBookingBottomSheet(sectors[index]),
                     child: Card(
                       margin: const EdgeInsets.only(right: 16),
-                      elevation: 4,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       child: Container(
                         width: 140,
-                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           gradient: const LinearGradient(
                             colors: [Colors.blueAccent, Colors.lightBlue],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
                           ),
                         ),
                         child: Column(
@@ -126,11 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(height: 12),
                             Text(
                               sectors[index].replaceAll('_', ' '),
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16
-                              ),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -140,58 +162,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-
             const SizedBox(height: 40),
-            const Text(
-              'Your reservations',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text('Your Reservations', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-
-
             Expanded(
-              child: reservations.isEmpty
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : reservations.isEmpty
                   ? const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.sports, size: 60, color: Colors.grey),
-                    SizedBox(height: 16),
-                    Text(
-                      'You have not booked anything yet',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
-                  ],
+                child: Text(
+                  'You have no upcoming trainings.',
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
                 ),
               )
                   : ListView.builder(
                 itemCount: reservations.length,
                 itemBuilder: (context, index) {
                   final res = reservations[index];
+
+                  final DateTime startTime = DateTime.parse(res['startTime']);
+                  final String displayTime = "${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}";
+
                   return Card(
-                    elevation: 2,
                     margin: const EdgeInsets.only(bottom: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       leading: const CircleAvatar(
                         backgroundColor: Colors.blueAccent,
                         child: Icon(Icons.check, color: Colors.white),
                       ),
                       title: Text(
                         res['sector'].replaceAll('_', ' '),
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(res['time']),
-                      ),
+                      subtitle: Text('Starts at: $displayTime'),
                       trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 28),
-                        onPressed: () {
-                          // TODO: DELETE /api/reservations/{id}
-                        },
+                        icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                        onPressed: () => _deleteReservation(res['id']),
                       ),
                     ),
                   );
