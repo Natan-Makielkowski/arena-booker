@@ -21,7 +21,7 @@ public class AppUser {
         this.role = role;
     }
 
-    @OneToMany(mappedBy = "appUser")
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Reservation> reservations =  new ArrayList<>();
 
     public Integer getId() {
