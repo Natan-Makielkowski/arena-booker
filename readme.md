@@ -1,7 +1,3 @@
----
-
-
----
 
 <h1 id="arena-booker">Arena Booker</h1>
 <p>A sports facility reservation system built with a fat-client architecture. The project consists of a native Windows desktop application (Flutter) and a containerized REST API (Spring Boot).</p>
