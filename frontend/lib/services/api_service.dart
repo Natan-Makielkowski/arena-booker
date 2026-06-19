@@ -24,7 +24,6 @@ class ApiService {
     }
   }
 
-
   Future<void> logout() async {
     await _storage.delete(key: 'jwt_token');
   }
@@ -36,7 +35,6 @@ class ApiService {
       'Authorization': token != null ? 'Bearer $token' : '',
     };
   }
-
 
   Future<List<dynamic>> getReservations() async {
     final headers = await _getAuthHeaders();
@@ -52,15 +50,15 @@ class ApiService {
     }
   }
 
-  Future<void> createReservation(String sector, String startTime, String endTime) async {
+  Future<void> createReservation(String sector, DateTime startTime, DateTime endTime) async {
     final headers = await _getAuthHeaders();
     final response = await http.post(
       Uri.parse('$baseUrl/reservations'),
       headers: headers,
       body: json.encode({
         'sector': sector,
-        'startTime': startTime,
-        'endTime': endTime,
+        'startTime': startTime.toIso8601String(),
+        'endTime': endTime.toIso8601String(),
       }),
     );
 
@@ -70,7 +68,6 @@ class ApiService {
       throw Exception('An error occurred during reservation');
     }
   }
-
 
   Future<void> deleteReservation(int id) async {
     final headers = await _getAuthHeaders();

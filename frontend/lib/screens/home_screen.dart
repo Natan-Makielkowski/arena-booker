@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,15 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _makeReservation(String sector) async {
-    final now = DateTime.now();
-    final startTime = now.toIso8601String();
-    final endTime = now.add(const Duration(hours: 1)).toIso8601String();
-
+  Future<void> _makeReservation(String sector, DateTime start, DateTime end) async {
     Navigator.pop(context);
 
     try {
-      await _apiService.createReservation(sector, startTime, endTime);
+      await _apiService.createReservation(sector, start, end);
       _showSnackBar('Reservation successful!', Colors.green);
       _fetchReservations();
     } catch (e) {
@@ -68,34 +65,117 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showBookingBottomSheet(String sector) {
+    DateTime selectedDate = DateTime.now();
+    TimeOfDay selectedTime = TimeOfDay.now();
+    int durationHours = 1;
+
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Book: ${sector.replaceAll('_', ' ')}',
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 24.0,
+                right: 24.0,
+                top: 24.0,
               ),
-              const SizedBox(height: 24),
-              OutlinedButton.icon(
-                icon: const Icon(Icons.calendar_today),
-                label: const Text('Book next hour'),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                onPressed: () => _makeReservation(sector),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Book: ${sector.replaceAll('_', ' ')}',
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ListTile(
+                    title: Text('Date: ${selectedDate.toString().split(' ')[0]}'),
+                    trailing: const Icon(Icons.calendar_today),
+                    onTap: () async {
+                      final DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 30)),
+                      );
+                      if (pickedDate != null) {
+                        setModalState(() {
+                          selectedDate = pickedDate;
+                        });
+                      }
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Start Time: ${selectedTime.format(context)}'),
+                    trailing: const Icon(Icons.access_time),
+                    onTap: () async {
+                      final TimeOfDay? pickedTime = await showTimePicker(
+                        context: context,
+                        initialTime: selectedTime,
+                      );
+                      if (pickedTime != null) {
+                        setModalState(() {
+                          selectedTime = pickedTime;
+                        });
+                      }
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 16.0),
+                        child: Text('Duration (hours):', style: TextStyle(fontSize: 16)),
+                      ),
+                      DropdownButton<int>(
+                        value: durationHours,
+                        items: [1, 2, 3, 4].map((int value) {
+                          return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text(value.toString()),
+                          );
+                        }).toList(),
+                        onChanged: (int? newValue) {
+                          if (newValue != null) {
+                            setModalState(() {
+                              durationHours = newValue;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.check),
+                    label: const Text('Confirm Booking'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: () {
+                      final start = DateTime(
+                        selectedDate.year,
+                        selectedDate.month,
+                        selectedDate.day,
+                        selectedTime.hour,
+                        selectedTime.minute,
+                      );
+                      final end = start.add(Duration(hours: durationHours));
+                      _makeReservation(sector, start, end);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -114,7 +194,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.logout, size: 28),
             onPressed: () async {
               await _apiService.logout();
-              // TODO: Navigate to login screen
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
             },
           )
         ],

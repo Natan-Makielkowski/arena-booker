@@ -9,6 +9,7 @@ import com.example.arena_booker.model.Reservation;
 import com.example.arena_booker.model.Sector;
 import com.example.arena_booker.repository.AppUserRepository;
 import com.example.arena_booker.repository.ReservationRepository;
+import jakarta.transaction.Transactional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ public class ReservationService {
                 reservation.getEndTime());
     }
 
+    @Transactional
     public ReservationResponseDto createReservation(@NonNull ReservationRequestDto reservationRequestDto, String username){
         if(isTaken(reservationRequestDto.sector(), reservationRequestDto.startTime(), reservationRequestDto.endTime())) {
             throw new ReservationConflictException("Sector is already in use.");
