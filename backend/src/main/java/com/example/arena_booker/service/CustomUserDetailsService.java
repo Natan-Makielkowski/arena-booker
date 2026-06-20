@@ -1,4 +1,4 @@
-package com.example.arena_booker.config;
+package com.example.arena_booker.service;
 
 import com.example.arena_booker.model.AppUser;
 import com.example.arena_booker.repository.AppUserRepository;
